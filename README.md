@@ -11,8 +11,6 @@ Members:
 - Christopher Court Rosa - <christopher.courtrosa@students.fhnw.ch>
 - Fabian Stoll - <fabian.stoll@students.fhnw.ch>
 
-> 🚧: **This is a template project**: Make sure you adapt this documentation and the source code in this project according to your needs and use case. Comments are provided with "🚧:". Do not leave these comments in your final submission!
-
 ## Contents
 
 - [Fly Around](#fly-around)
@@ -93,8 +91,6 @@ This wireframe design represents the initial idea for the user interface of our 
 ![design1](/images/design2.png)
 
 ### Prototype
-
-
 
 ![design1](/images/home-search.png)
 
@@ -192,10 +188,9 @@ This Web application was developed using Budibase and it is available for previe
 
 - Back-end developer: Franco D'Gostino
 - Front-end developer: Christopher Court Rosa
-- Business Analyst: Fabian Stoll
+- Business Analyst / Testing: Fabian Stoll
 
 ### Milestones
-
 
 1. **Analysis**: Scenario ideation, use case analysis and user story writing.
 2. **Prototype Design**: Creation of wireframe and prototype.
