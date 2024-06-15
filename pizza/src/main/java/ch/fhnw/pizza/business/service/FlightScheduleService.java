@@ -25,9 +25,6 @@ public class FlightScheduleService {
     private FlightRepository flightRepository;
     
     @Autowired
-    private DestinationRepository destinationRepository;
-
-    @Autowired
     private AirportRepository airportRepository;
 
 
@@ -135,25 +132,6 @@ public class FlightScheduleService {
             airportRepository.deleteById(id);
         } else {
             throw new Exception("Airport with id " + id + " does not exist");
-        }
-    }
-
-    
-    public Destination addDestination(Destination destination) throws Exception {
-        if(destination.getName() != null) {
-            if (destinationRepository.findByName(destination.getName()) == null)
-                return destinationRepository.save(destination);
-                throw new Exception("Destination with id " + destination.getId() + " already exists");
-        }
-        throw new Exception("Invalid destination name");
-    }
-    
-
-    public void deleteDestination(Long id) throws Exception {
-        if (destinationRepository.existsById(id)) {
-            destinationRepository.deleteById(id);
-        } else {
-            throw new Exception("Destination with id " + id + " does not exist");
         }
     }
 
