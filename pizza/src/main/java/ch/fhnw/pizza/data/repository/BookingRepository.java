@@ -24,7 +24,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<BookingProjection> findAllProjectedBy();
     List<BookingProjection> findAllProjectedByUserEmail(String userEmail);
     
-    @Query("SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END FROM Booking b WHERE b.passenger.email = :email AND b.flight.id = :flightId")
-    boolean existsByPassengerEmailAndFlightId(@Param("email") String email, @Param("flightId") Long flightId);
+    @Query( "SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END FROM Booking b " +
+            "WHERE b.passenger.email = :email " +
+            "AND b.passenger.firstName = :firstName " +
+            "AND b.passenger.lastName = :lastName " +
+            "AND b.flight.id = :flightId")
+    boolean existsByPassengerAndFlightId(@Param("email") String email, 
+                                         @Param("firstName") String firstName, 
+                                         @Param("lastName") String lastName, 
+                                         @Param("flightId") Long flightId);
     
 }

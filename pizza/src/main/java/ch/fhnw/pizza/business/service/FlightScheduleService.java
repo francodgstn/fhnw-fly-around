@@ -120,18 +120,6 @@ public class FlightScheduleService {
 
         return flightRepository.findProjectedById(id).orElseThrow(() -> new RuntimeException("Flight with id " + id + " not found"));
     }
-
-    public void deleteFlight(Long id) throws Exception {
-        if (flightRepository.existsById(id)) {
-            flightRepository.deleteById(id);
-        } else {
-            throw new Exception("Flight with id " + id + " does not exist");
-        }
-    }
-
-
-
-
     
     public List<Airport> getAllAirports() {
         List<Airport> airportList = airportRepository.findAll();

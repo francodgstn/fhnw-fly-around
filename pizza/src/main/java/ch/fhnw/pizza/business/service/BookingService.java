@@ -46,18 +46,22 @@ public class BookingService {
         Flight flight = flightRepository.findById(flightId)
             .orElseThrow(() -> new Exception("Flight with id " + flightId + " not found"));
 
-        if(paxEmail != null) {
-            if (bookingRepository.existsByPassengerEmailAndFlightId(paxEmail, flightId)){
-                throw new Exception("Booking already exists with given details");
-            }
-            
-            Passenger pax = new Passenger();
-            pax.setEmail(paxEmail);
-            pax.setFirstName(bookingRequest.getPassengerFirstName());
-            pax.setLastName(bookingRequest.getPassengerLastName());
-            pax = getPassengerByEmailOrAdd(pax);
-            booking.setPassenger(pax); // set the passenger to the booking    
+        
+        if (bookingRepository.existsByPassengerAndFlightId(
+            bookingRequest.getPassengerEmail(),
+            bookingRequest.getPassengerFirstName(),
+            bookingRequest.getPassengerLastName(),
+            flightId)){
+            throw new Exception("Booking already exists with given details");
         }
+        
+        Passenger pax = new Passenger();
+        pax.setEmail(paxEmail);
+        pax.setFirstName(bookingRequest.getPassengerFirstName());
+        pax.setLastName(bookingRequest.getPassengerLastName());
+        pax = getPassengerByEmailOrAdd(pax);
+        booking.setPassenger(pax); // set the passenger to the booking    
+    
 
         booking.setFlight(flight); // set the flight to the 
         booking.setPrice(flight.getPrice());
