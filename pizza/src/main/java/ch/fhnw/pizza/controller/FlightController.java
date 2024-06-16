@@ -4,7 +4,9 @@ import ch.fhnw.pizza.business.service.BookingService;
 import ch.fhnw.pizza.business.service.FlightScheduleService;
 import ch.fhnw.pizza.data.domain.Airport;
 import ch.fhnw.pizza.data.domain.Flight;
+import ch.fhnw.pizza.data.dto.BookingRequestDto;
 import ch.fhnw.pizza.data.dto.FlightDto;
+import ch.fhnw.pizza.data.dto.FlightRequestDto;
 import ch.fhnw.pizza.data.projection.BookingProjection;
 import ch.fhnw.pizza.data.projection.FlightProjection;
 import ch.fhnw.pizza.data.repository.AirportRepository;
@@ -66,6 +68,34 @@ public class FlightController {
             .collect(Collectors.toList());
     }
 
+
+    @PostMapping(consumes="application/json", produces = "application/json")
+    public ResponseEntity addFlight(@RequestBody FlightRequestDto flightRequest) {
+        FlightProjection flightProjection = null;
+        try{
+            flightProjection = flightScheduleService.addFlight(flightRequest);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Booking already exists with given details");
+        }
+        return ResponseEntity.ok(convertToDto(flightProjection));
+    }
+
+
+    @PutMapping(path="/{id}", consumes="application/json", produces = "application/json")
+    public ResponseEntity updatePizza(@PathVariable Long id, @RequestBody FlightRequestDto flightRequest) {
+        FlightProjection flightProjection = null;
+        try{
+            flightProjection = flightScheduleService.updateFlight(id, flightRequest);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Booking already exists with given details");
+
+        }
+        return ResponseEntity.ok(flightProjection);
+        
+    }
+
     @GetMapping(path="/airport/{iataCode}", produces = "application/json")
     public ResponseEntity getAirport(@PathVariable String iataCode) {
         try{
@@ -77,48 +107,15 @@ public class FlightController {
         }
     }
 
-    
-
-    // @PostMapping(path="/pizza", consumes="application/json", produces = "application/json")
-    // public ResponseEntity addPizza(@RequestBody Pizza pizza) {
-    //     try{
-    //         pizza = menuService.addPizza(pizza);
-            
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.CONFLICT).body("Pizza already exists with given name");
-    //     }
-    //     return ResponseEntity.ok(pizza);
-        
-    // }
-
-    // @PutMapping(path="/pizza/{id}", consumes="application/json", produces = "application/json")
-    // public ResponseEntity updatePizza(@PathVariable Long id, @RequestBody Pizza pizza) {
-    //     try{
-    //         pizza = menuService.updatePizza(id, pizza);
-            
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.CONFLICT).body("No pizza found with given id");
-
-    //     }
-    //     return ResponseEntity.ok(pizza);
-        
-    // }
-
-    // @DeleteMapping(path="/pizza/{id}")
-    // public ResponseEntity<String> deletePizza(@PathVariable Long id) {
-    //     try{
-    //         menuService.deletePizza(id);
-    //         return ResponseEntity.ok("Pizza with id " + id + " deleted");
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pizza not found");
-    //     }
-    // }
-
-    // @GetMapping(path="", produces = "application/json")
-    // public ResponseEntity<Menu> getMenu(@RequestParam String location) {
-    //     Menu menu = menuService.getMenuByLocation(location);
-    //     return ResponseEntity.ok(menu);      
-    // }
+    @DeleteMapping(path="/{id}")
+    public ResponseEntity<String> deleteFlight(@PathVariable Long id) {
+        try{
+            flightScheduleService.deleteFlight(id);
+            return ResponseEntity.ok("Flight with id " + id + " deleted");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Flight not found");
+        }
+    }
     
     private FlightDto convertToDto(FlightProjection flight) {
         ModelMapper modelMapper = new ModelMapper();

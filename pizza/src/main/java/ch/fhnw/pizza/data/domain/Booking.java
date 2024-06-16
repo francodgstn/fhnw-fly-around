@@ -37,12 +37,15 @@ public class Booking {
     @JoinColumn(name = "passenger_fk")
     private Passenger passenger;
 
-    
     @ManyToOne
     @JoinColumn(name = "flight_fk")
     private Flight flight;
 
+    @Column(name = "user_email")
     private String userEmail;
+
+    @Column(name = "price")
+    private double price;
     
     public Long getId() {
         return id;
@@ -61,11 +64,11 @@ public class Booking {
     }
 
     public LocalDate getBookingDate() {
-        return checkinDate;
+        return bookingDate;
     }
 
-    public void setBookingDate(LocalDate checkinDate) {
-        this.checkinDate = checkinDate;
+    public void setBookingDate(LocalDate bookingDate) {
+        this.bookingDate = bookingDate;
     }
 
     public Passenger getPassenger() {
@@ -92,4 +95,12 @@ public class Booking {
         this.userEmail = userEmail;
     }
     
+     // Getter and Setter methods for price
+     public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
 }

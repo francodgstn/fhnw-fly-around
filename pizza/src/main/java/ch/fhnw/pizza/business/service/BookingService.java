@@ -11,6 +11,7 @@ import ch.fhnw.pizza.data.domain.Airport;
 import ch.fhnw.pizza.data.domain.Booking;
 import ch.fhnw.pizza.data.domain.Flight;
 import ch.fhnw.pizza.data.domain.Passenger;
+import ch.fhnw.pizza.data.dto.BookingRequestDto;
 import ch.fhnw.pizza.data.projection.BookingProjection;
 import ch.fhnw.pizza.data.projection.FlightProjection;
 import ch.fhnw.pizza.data.repository.AirportRepository;
@@ -31,24 +32,35 @@ public class BookingService {
     @Autowired
     private FlightRepository flightRepository;
 
-    public BookingProjection addBooking(Booking booking, Passenger passenger, Long flightId) throws Exception {
-        if (booking.getId() != null && bookingRepository.existsById(booking.getId())) {
-            throw new Exception("Booking with id " + booking.getId() + " already exists");
-        }
+    public BookingProjection addBooking(BookingRequestDto bookingRequest) throws Exception {
+        // if (booking.getId() != null && bookingRepository.existsById(booking.getId())) {
+        //     throw new Exception("Booking with id " + booking.getId() + " already exists");
+        // }
+
+        Booking booking = new Booking();
+        Long flightId = bookingRequest.getFlightId();
+        String paxEmail = bookingRequest.getPassengerEmail();
+
+        booking.setUserEmail(bookingRequest.getUserEmail());
 
         Flight flight = flightRepository.findById(flightId)
             .orElseThrow(() -> new Exception("Flight with id " + flightId + " not found"));
 
-
-        //booking.setId(booking.getId());
-        booking.setCheckinDate(booking.getCheckinDate());
-        booking.setFlight(flight); // set the flight to the booking
-
-        if(passenger != null) {
-            Passenger storedPassenger = getPassengerByEmailOrAdd(passenger);
-            booking.setPassenger(storedPassenger); // set the passenger to the booking
+        if(paxEmail != null) {
+            if (bookingRepository.existsByPassengerEmailAndFlightId(paxEmail, flightId)){
+                throw new Exception("Booking already exists with given details");
+            }
+            
+            Passenger pax = new Passenger();
+            pax.setEmail(paxEmail);
+            pax.setFirstName(bookingRequest.getPassengerFirstName());
+            pax.setLastName(bookingRequest.getPassengerLastName());
+            pax = getPassengerByEmailOrAdd(pax);
+            booking.setPassenger(pax); // set the passenger to the booking    
         }
-        
+
+        booking.setFlight(flight); // set the flight to the 
+        booking.setPrice(flight.getPrice());
         booking.setBookingDate(LocalDate.now());
 
         Booking savedBooking = bookingRepository.save(booking);
@@ -84,7 +96,11 @@ public class BookingService {
 
 
     public List<BookingProjection> getAllUserBookings(String userEmail) {
-        List<BookingProjection> bookingList = bookingRepository.findAllProjectedByUserEmail(userEmail);
+        List<BookingProjection> bookingList;
+        if (userEmail == null || userEmail.isBlank()) {
+            return null;
+        }
+        bookingList = bookingRepository.findAllProjectedByUserEmail(userEmail);
         return bookingList;
     }
 
@@ -94,6 +110,14 @@ public class BookingService {
             return booking;
         } catch (Exception e) {
             throw new RuntimeException("Booking with id " + id + " not found");
+        }
+    }
+
+    public void deleteBooking(Long id) throws Exception {
+        if (bookingRepository.existsById(id)) {
+            bookingRepository.deleteById(id);
+        } else {
+            throw new Exception("Booking with id " + id + " does not exist");
         }
     }
 }

@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+import io.swagger.v3.oas.models.PathItem.HttpMethod;
+
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -28,8 +30,20 @@ public class SecurityConfig {
             User.withUsername("myuser")
                 .password("{noop}password")
                 .authorities("READ","ROLE_USER")
-                .build(), 
+                .build(),
+            User.withUsername("mowohic922@jadsys.com")
+                .password("{noop}password")
+                .authorities("READ","ROLE_USER")
+                .build(),
             User.withUsername("myadmin")
+                .password("{noop}password")
+                .authorities("READ","ROLE_ADMIN")
+                .build(),
+            User.withUsername("franco.dgstn@gmail.com")
+                .password("{noop}password")
+                .authorities("READ","ROLE_ADMIN")
+                .build(),
+            User.withUsername("chrisrosa14@gmail.com")
                 .password("{noop}password")
                 .authorities("READ","ROLE_ADMIN")
                 .build());
@@ -39,20 +53,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests( auth -> auth
-                        .requestMatchers("/menu").hasRole("USER") //note that the role need not be prefixed with "ROLE_"
-                        .requestMatchers("/menu/pizza/**").hasRole("ADMIN") //note that the role need not be prefixed with "ROLE_"
-                        .requestMatchers("/menu/**",
-                                                    "/**", //allow access to the home page
-                                                    "/swagger-ui.html", //allow access to the swagger UI
-                                                    "/v3/api-docs/**",  //allow access to the swagger API documentation
-                                                    "/swagger-ui/**").permitAll() //allow access to the swagger UI
-                        .anyRequest().hasAuthority("SCOPE_READ")           
-                )       
-                .formLogin(withDefaults()) //need to include a static import for withDefaults, see the imports at the top of the file
-                .httpBasic(withDefaults())
-                .build(); 
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests( auth -> auth
+                .requestMatchers("/menu").hasRole("USER") //note that the role need not be prefixed with "ROLE_"
+                .requestMatchers("/menu/pizza/**").hasRole("ADMIN") //note that the role need not be prefixed with "ROLE_"
+                .requestMatchers(org.springframework.http.HttpMethod.PUT, "/flights").hasRole("ADMIN") // limit PUT requests to "/menu/**" for users with "ADMIN" role
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/flights").hasRole("ADMIN") 
+                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/flights").hasRole("ADMIN") 
+                .requestMatchers("/menu/**",
+                                "/**", //allow access to the home page
+                                "/swagger-ui.html", //allow access to the swagger UI
+                                "/v3/api-docs/**",  //allow access to the swagger API documentation
+                                "/swagger-ui/**").permitAll() //allow access to the swagger UI
+                .anyRequest().hasAuthority("SCOPE_READ")           
+            )       
+            .formLogin(withDefaults()) //need to include a static import for withDefaults, see the imports at the top of the file
+            .httpBasic(withDefaults())
+            .build(); 
     } 
 
 

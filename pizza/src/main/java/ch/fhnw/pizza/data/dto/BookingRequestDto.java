@@ -1,20 +1,43 @@
 package ch.fhnw.pizza.data.dto;
 
-import ch.fhnw.pizza.data.domain.Booking;
-import ch.fhnw.pizza.data.domain.Passenger;
 
 public class BookingRequestDto {
-    private Booking booking;
-    private Passenger passenger;
-
+    private String passengerFirstName;
+    private String passengerLastName;
+    private String passengerEmail;
+    private String userEmail;
     private Long flightId;
 
-    public Booking getBooking() {
-        return booking;
+    public String getPassengerFirstName() {
+        return passengerFirstName;
     }
 
-    public void setBooking(Booking booking) {
-        this.booking = booking;
+    public void setPassengerFirstName(String passengerFirstName) {
+        this.passengerFirstName = passengerFirstName;
+    }
+
+    public String getPassengerLastName() {
+        return passengerLastName;
+    }
+
+    public void setPassengerLastName(String passengerLastName) {
+        this.passengerLastName = passengerLastName;
+    }
+
+    public String getPassengerEmail() {
+        return passengerEmail;
+    }
+
+    public void setPassengerEmail(String passengerEmail) {
+        this.passengerEmail = passengerEmail;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public Long getFlightId() {
@@ -25,11 +48,5 @@ public class BookingRequestDto {
         this.flightId = flightId;
     }
 
-    public Passenger getPassenger() {
-        return passenger;
-    }
 
-    public void setPassenger(Passenger passenger) {
-        this.passenger = passenger;
-    }
 }

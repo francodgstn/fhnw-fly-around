@@ -9,6 +9,7 @@ public interface BookingProjection {
     LocalDate getBookingDate();
     PassengerProjection getPassenger();
     FlightProjection getFlight();
+    double getPrice();
     String getUserEmail();
 
     

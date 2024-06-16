@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -115,65 +116,40 @@ public class PizzaApplication {
 		//airportFra.setDestinations(List.of(destinationFrankfurt));
 		
 		
-		// LX1733 FCO-ZRH
-		Flight flight = new Flight();
-		flight.setFlightDesignator("LX1733");
-		flight.setFlightDate(LocalDate.now().plusDays(1));
-		flight.setDepartureTime(LocalTime.of( 20, 30));
-		flight.setArrivalTime(LocalTime.of( 22, 0));
-		flight.setDepartureAirport(airportFco);
-		flight.setArrivalAirport(airportZrh);
-		flight = flightScheduleService.addFlight(flight);
+		String[] flightDesignators = {"LX", "BA", "LH", "AF"};
+		Random random = new Random();
+		List<Airport> airports = flightScheduleService.getAllAirports();
+		
+		Flight flight;
+		for (int i = 0; i < 15; i++) {	
+			flight = new Flight();
+			// Randomize a bit the fligts data
+			String randomFlightDesignator = flightDesignators[random.nextInt(flightDesignators.length)] + String.format("%03d", random.nextInt(1000));
+			int daysToAdd = i % 3 + 1;
+			int randomHour = new Random().nextInt(20);
+			int randomHourArrival = randomHour + new Random().nextInt(3);
+			int randomMinute = new Random().nextInt(12) * 5;
+			int randomMinuteArrival = new Random().nextInt(12) * 5;
 
-		// LH400 FRA-ZRH
-		flight = new Flight();
-		flight.setFlightDesignator("LH400");
-		flight.setFlightDate(LocalDate.now().plusDays(1));
-		flight.setDepartureTime(LocalTime.of( 14, 30));
-		flight.setArrivalTime(LocalTime.of(16, 00));
-		flight.setDepartureAirport(airportFra);
-		flight.setArrivalAirport(airportZrh);
-		flight = flightScheduleService.addFlight(flight);
-
-		// BA710 LHR-ZRH
-		flight = new Flight();
-		flight.setFlightDesignator("BA710");
-		flight.setFlightDate(LocalDate.now().plusDays(1));
-		flight.setDepartureTime(LocalTime.of( 18, 30));
-		flight.setArrivalTime(LocalTime.of( 20, 00));
-		flight.setDepartureAirport(airportLhr);
-		flight.setArrivalAirport(airportZrh);
-		flight = flightScheduleService.addFlight(flight);
-
-		// LX1734 ZRH-FCO
-		flight = new Flight();
-		flight.setFlightDesignator("LX1734");
-		flight.setFlightDate(LocalDate.now().plusDays(2));
-		flight.setDepartureTime(LocalTime.of( 18, 00));
-		flight.setArrivalTime(LocalTime.of( 19, 30));
-		flight.setDepartureAirport(airportZrh);
-		flight.setArrivalAirport(airportFco);
-		flight = flightScheduleService.addFlight(flight);
-
-		// LH401 ZRH-FRA
-		flight = new Flight();
-		flight.setFlightDesignator("LH401");
-		flight.setFlightDate(LocalDate.now().plusDays(2));
-		flight.setDepartureTime(LocalTime.of( 8, 30));
-		flight.setArrivalTime(LocalTime.of( 10, 00));
-		flight.setDepartureAirport(airportZrh);
-		flight.setArrivalAirport(airportFra);
-		flight = flightScheduleService.addFlight(flight);
-
-		// BA711 ZRH-LHR
-		flight = new Flight();
-		flight.setFlightDesignator("BA711");
-		flight.setFlightDate(LocalDate.now().plusDays(2));
-		flight.setDepartureTime(LocalTime.of( 12, 30));
-		flight.setArrivalTime(LocalTime.of( 14, 00));
-		flight.setDepartureAirport(airportZrh);
-		flight.setArrivalAirport(airportLhr);
-		flight = flightScheduleService.addFlight(flight);
+			flight.setFlightDesignator(randomFlightDesignator);
+			flight.setFlightDate(LocalDate.now().plusDays(daysToAdd));
+			flight.setDepartureDateTimeLocal(LocalDateTime.now().plusDays(daysToAdd).withHour(randomHour).withMinute(randomMinute));
+			flight.setArrivalDateTimeLocal(LocalDateTime.now().plusDays(daysToAdd).withHour(randomHourArrival).withMinute(randomMinuteArrival));
+			// Set random departure and arrival airports
+			int departureIndex = new Random().nextInt(airports.size());
+			int arrivalIndex = new Random().nextInt(airports.size());
+			Airport departureAirport = airports.get(departureIndex);
+			Airport arrivalAirport = airports.get(arrivalIndex);
+			
+			// Make sure departure and arrival airports are different
+			while (departureAirport.equals(arrivalAirport)) {
+				arrivalIndex = new Random().nextInt(airports.size());
+				arrivalAirport = airports.get(arrivalIndex);
+			}
+			flight.setDepartureAirport(departureAirport);
+			flight.setArrivalAirport(arrivalAirport);
+			flight = flightScheduleService.addFlight(flight);
+		}
 
 
 		// Create 3 sample passengers
@@ -198,10 +174,10 @@ public class PizzaApplication {
 
 
 		// Create a booking
-		Booking booking = new Booking();
+		// Booking booking = new Booking();
 		
-		booking.setCheckinDate(LocalDate.now());
-		bookingService.addBooking(booking, passenger2, flight.getId());
+		// booking.setCheckinDate(LocalDate.now());
+		// bookingService.addBooking(booking, passenger2, flight.getId());
 
 	}
 

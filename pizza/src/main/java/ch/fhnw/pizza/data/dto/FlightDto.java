@@ -2,17 +2,21 @@ package ch.fhnw.pizza.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class FlightDto {
     private Long id;
     private String flightDesignator;
     private LocalDate flightDate;
 
-    @JsonFormat(pattern = "hh:mm")
-    private String departureTime;
+    // @JsonFormat(pattern = "hh:mm")
+    // private String departureTime;
 
-    @JsonFormat(pattern = "hh:mm")
-    private String arrivalTime;
+    // @JsonFormat(pattern = "hh:mm")
+    // private String arrivalTime;
+
+    private LocalDateTime departureDateTimeLocal;
+    private LocalDateTime arrivalDateTimeLocal;
 
     private double price;
     private DepartureAirportDto departureAirport;
@@ -43,22 +47,6 @@ public class FlightDto {
         this.flightDate = flightDate;
     }
 
-    public String getDepartureTime() {
-        return departureTime;
-    }
-
-    public void setDepartureTime(String departureTime) {
-        this.departureTime = departureTime;
-    }
-
-    public String getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public void setArrivalTime(String arrivalTime) {
-        this.arrivalTime = arrivalTime;
-    }
-
     public double getPrice() {
         return price;
     }
@@ -81,6 +69,23 @@ public class FlightDto {
 
     public void setArrivalAirport(ArrivalAirportDto arrivalAirport) {
         this.arrivalAirport = arrivalAirport;
+    }
+
+    
+    public LocalDateTime getDepartureDateTimeLocal() {
+        return departureDateTimeLocal;
+    }
+
+    public void setDepartureDateTimeLocal(LocalDateTime departureDateTimeLocal) {
+        this.departureDateTimeLocal = departureDateTimeLocal;
+    }
+
+    public LocalDateTime getArrivalDateTimeLocal() {
+        return arrivalDateTimeLocal;
+    }
+
+    public void setArrivalDateTimeLocal(LocalDateTime arrivalDateTimeLocal) {
+        this.arrivalDateTimeLocal = arrivalDateTimeLocal;
     }
 
     public static class DepartureAirportDto {

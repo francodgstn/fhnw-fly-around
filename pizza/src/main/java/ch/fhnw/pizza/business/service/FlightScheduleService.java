@@ -13,6 +13,7 @@ import ch.fhnw.pizza.data.domain.Airport;
 import ch.fhnw.pizza.data.domain.Destination;
 import ch.fhnw.pizza.data.domain.Flight;
 import ch.fhnw.pizza.data.domain.Pizza;
+import ch.fhnw.pizza.data.dto.FlightRequestDto;
 import ch.fhnw.pizza.data.projection.FlightProjection;
 import ch.fhnw.pizza.data.repository.AirportRepository;
 import ch.fhnw.pizza.data.repository.DestinationRepository;
@@ -59,32 +60,65 @@ public class FlightScheduleService {
             throw new Exception("Flight with id " + flight.getId() + " already exists");
         }
     
-        // Add the price to the flight
-        double flightTime = ChronoUnit.HOURS.between(flight.getDepartureTime(), flight.getArrivalTime());
-        double randomFactor = Math.random() * 0.6 + 1;
-        double price = flightTime * 100 * randomFactor;
-        double roundedPrice = Math.round(price * 100.0) / 100.0;
-        flight.setPrice(roundedPrice);
+        if (flight.getPrice() == 0) { 
+            // Add the price to the flight
+            double flightTime = ChronoUnit.HOURS.between(flight.getDepartureDateTimeLocal(), flight.getArrivalDateTimeLocal());
+            double randomFactor = Math.random() * 0.6 + 1;
+            double price = flightTime * 100 * randomFactor;
+            double roundedPrice = Math.max(Math.round(price * 100.0) / 100.0, 35.0);
+
+            flight.setPrice(roundedPrice);
+        }
 
         return flightRepository.save(flight);
     }
+
+
+    public FlightProjection addFlight(FlightRequestDto flightRequest) throws Exception {
+
+        Flight flight = new Flight();
+        flight.setFlightDesignator(flightRequest.getFlightDesignator());
+        flight.setFlightDate(flightRequest.getDepartureDateTimeLocal().toLocalDate());
+        flight.setDepartureDateTimeLocal(flightRequest.getDepartureDateTimeLocal());
+        flight.setArrivalDateTimeLocal(flightRequest.getArrivalDateTimeLocal());
+        flight.setPrice(flightRequest.getPrice());
+        flight.setArrivalDateTimeLocal(flightRequest.getArrivalDateTimeLocal());
+        flight.setDepartureDateTimeLocal(flightRequest.getDepartureDateTimeLocal());
+        Airport departureAirport = findAirportByIataCode(flightRequest.getDepartureAirportIataCode());
+        Airport arrivalAirport = findAirportByIataCode(flightRequest.getArrivalAirportIataCode());
+        flight.setDepartureAirport(departureAirport);
+        flight.setArrivalAirport(arrivalAirport);       
+
+        flight = addFlight(flight);
+        Long id = flight.getId();
+
+        return flightRepository.findProjectedById(id).orElseThrow(() -> new RuntimeException("Flight with id " + id + " not found"));
+
+    }
+    
 
     public List<FlightProjection> findFlightsByAirportsAndDate(Airport departureAirport, Airport arrivalAirport, LocalDate flightDate) {
         return flightRepository.findFlightsByAirportsAndDate(departureAirport, arrivalAirport, flightDate);
     }
 
-    public Flight updateFlight(Long id, Flight flight) throws Exception {
+    public FlightProjection updateFlight(Long id, FlightRequestDto flightRequest) throws Exception {
+       
         Flight flightToUpdate = flightRepository.findById(id).orElseThrow(() -> new Exception("Flight with id " + id + " does not exist"));
     
-        flightToUpdate.setFlightDesignator(flight.getFlightDesignator());
-        flightToUpdate.setFlightDate(flight.getFlightDate());
-        flightToUpdate.setDepartureAirport(flight.getDepartureAirport());
-        flightToUpdate.setArrivalAirport(flight.getArrivalAirport());
-        flightToUpdate.setDepartureTime(flight.getDepartureTime());
-        flightToUpdate.setArrivalTime(flight.getArrivalTime());
-        flightToUpdate.setBookings(flight.getBookings());
+        flightToUpdate.setFlightDesignator(flightRequest.getFlightDesignator());
+        flightToUpdate.setFlightDate(flightRequest.getFlightDate());
+        flightToUpdate.setDepartureDateTimeLocal(flightRequest.getDepartureDateTimeLocal());
+        flightToUpdate.setArrivalDateTimeLocal(flightRequest.getArrivalDateTimeLocal());
+        flightToUpdate.setPrice(flightRequest.getPrice());
+        flightToUpdate.setArrivalDateTimeLocal(flightRequest.getArrivalDateTimeLocal());
+        flightToUpdate.setDepartureDateTimeLocal(flightRequest.getDepartureDateTimeLocal());
+        Airport departureAirport = findAirportByIataCode(flightRequest.getDepartureAirportIataCode());
+        Airport arrivalAirport = findAirportByIataCode(flightRequest.getArrivalAirportIataCode());
+        flightToUpdate.setDepartureAirport(departureAirport);
+        flightToUpdate.setArrivalAirport(arrivalAirport);       
+        flightToUpdate = flightRepository.save(flightToUpdate);
 
-        return flightRepository.save(flightToUpdate);
+        return flightRepository.findProjectedById(id).orElseThrow(() -> new RuntimeException("Flight with id " + id + " not found"));
     }
 
     public void deleteFlight(Long id) throws Exception {
@@ -132,6 +166,14 @@ public class FlightScheduleService {
             airportRepository.deleteById(id);
         } else {
             throw new Exception("Airport with id " + id + " does not exist");
+        }
+    }
+
+    public void deleteFlight(Long id) throws Exception {
+        if (flightRepository.existsById(id)) {
+            flightRepository.deleteById(id);
+        } else {
+            throw new Exception("Flight with id " + id + " does not exist");
         }
     }
 

@@ -1,12 +1,14 @@
 package ch.fhnw.pizza.data.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -46,17 +48,15 @@ public class Flight {
     @JoinColumn(name = "arrival_airport_fk")
     private Airport arrivalAirport;
 
-    @Temporal(TemporalType.TIME)
-    @Column(name = "departure_time")
-    @JsonFormat(pattern = "hh:mm")
-    private LocalTime  departureTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "departure_date_time_local")
+    private LocalDateTime  departureDateTimeLocal;
 
-    @Temporal(TemporalType.TIME)
-    @Column(name = "arrival_time")
-    @JsonFormat(pattern = "hh:mm")
-    private LocalTime  arrivalTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "arrival_date_time_local")
+    private LocalDateTime  arrivalDateTimeLocal;
 
-    @OneToMany(mappedBy = "flight")
+    @OneToMany(mappedBy = "flight", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings;
 
     @Column(name = "price")
@@ -107,23 +107,6 @@ public class Flight {
         this.arrivalAirport = arrivalAirport;
     }
 
-    // Getter and Setter methods for departureTime
-    public LocalTime getDepartureTime() {
-        return departureTime;
-    }
-
-    public void setDepartureTime(LocalTime departureTime) {
-        this.departureTime = departureTime;
-    }
-
-    // Getter and Setter methods for arrivalTime
-    public LocalTime getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public void setArrivalTime(LocalTime arrivalTime) {
-        this.arrivalTime = arrivalTime;
-    }
 
     // Getter and Setter methods for bookings
     public List<Booking> getBookings() {
@@ -141,5 +124,23 @@ public class Flight {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+     // Getter and Setter methods for departureDateTimeLocal
+     public LocalDateTime getDepartureDateTimeLocal() {
+        return departureDateTimeLocal;
+    }
+
+    public void setDepartureDateTimeLocal(LocalDateTime departureDateTimeLocal) {
+        this.departureDateTimeLocal = departureDateTimeLocal;
+    }
+
+    // Getter and Setter methods for arrivalDateTimeLocal
+    public LocalDateTime getArrivalDateTimeLocal() {
+        return arrivalDateTimeLocal;
+    }
+
+    public void setArrivalDateTimeLocal(LocalDateTime arrivalDateTimeLocal) {
+        this.arrivalDateTimeLocal = arrivalDateTimeLocal;
     }
 }

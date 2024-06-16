@@ -1,15 +1,14 @@
 package ch.fhnw.pizza.data.projection;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public interface FlightProjection {
     Long getId();
     String getFlightDesignator();
     LocalDate getFlightDate();
-    LocalTime getDepartureTime();
-    LocalTime getArrivalTime();
+    LocalDateTime  getDepartureDateTimeLocal();
+    LocalDateTime  getArrivalDateTimeLocal();
     double getPrice();
     DepartureAirportProjection getDepartureAirport();
     ArrivalAirportProjection getArrivalAirport();
